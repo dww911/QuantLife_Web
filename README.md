@@ -1,5 +1,14 @@
 # QuantLife Web
 
+![GitHub stars](https://img.shields.io/github/stars/dww911/QuantLife_Web?style=social)
+![GitHub forks](https://img.shields.io/github/forks/dww911/QuantLife_Web?style=social)
+![License](https://img.shields.io/github/license/dww911/QuantLife_Web?color=blue)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)
+![Local First](https://img.shields.io/badge/本地优先-数据自主管理-2f7cf6)
+![Bring Your Own Key](https://img.shields.io/badge/API-用户自备密钥-orange)
+
+> 把生活变成一场持续升级的游戏。
+
 QuantLife Web 是一个本地优先的人生成长记录工具。你可以用它记录每日打卡、经验值、维度成长、任务营地、财富目标，也可以接入自己的 AI API 来做文字解析和规划。
 
 这个项目不会自带任何人的 API Key。每个用户都需要配置自己的 API。
