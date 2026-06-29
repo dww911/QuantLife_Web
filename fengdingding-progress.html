@@ -2900,7 +2900,6 @@ body.focus-home-mode #mobileFocusHome {
     </div>
     <div class="menu-panel">
       <div class="menu-btn active" id="menuOverview"><span class="menu-icon">🏠</span>总览</div>
-      <div class="menu-btn" id="menuFocusHome"><span class="menu-icon">📱</span>极简首页</div>
       <div class="menu-btn" id="menuToday"><span class="menu-icon">🕒</span>今日战绩</div>
       <div class="menu-btn" id="menuQuickCheckin"><span class="menu-icon">✍️</span>快速打卡</div>
       <div class="menu-btn" id="menuWealth"><span class="menu-icon">💰</span>财富目标</div>
@@ -5597,7 +5596,6 @@ function bindMobileTabbar() {
   const menuQuickCheckin = document.getElementById('menuQuickCheckin');
   const menuTaskCamp = document.getElementById('menuTaskCamp');
   const menuSettings = document.getElementById('menuSettings');
-  const menuFocusHome = document.getElementById('menuFocusHome');
 
   const setActive = (tab) => {
     tabs.forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-tab') === tab));
@@ -5628,8 +5626,7 @@ function bindMobileTabbar() {
       return;
     }
     if (tab === 'profile') {
-      if (menuSettings) menuSettings.click();
-      else if (menuFocusHome) menuFocusHome.click();
+      menuSettings?.click();
       setActive(tab);
     }
   });
@@ -5671,7 +5668,6 @@ function renderCalendar(data) {
 function bindSidebarMenus() {
   const menuButtons = Array.from(document.querySelectorAll('.menu-btn'));
   const menuOverview = document.getElementById('menuOverview');
-  const menuFocusHome = document.getElementById('menuFocusHome');
   const menuToday = document.getElementById('menuToday');
   const menuQuickCheckin = document.getElementById('menuQuickCheckin');
   const menuWealth = document.getElementById('menuWealth');
@@ -5728,7 +5724,6 @@ function bindSidebarMenus() {
     mapSectionToMobileTab(section || null);
   }
   if (menuOverview) menuOverview.addEventListener('click', () => { setActive(menuOverview); showDashboard(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-  if (menuFocusHome) menuFocusHome.addEventListener('click', () => { setActive(menuFocusHome); showFocusHome(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
   if (menuToday) menuToday.addEventListener('click', () => {
     selectedBattleDate = today;
     setActive(menuToday);
@@ -5759,13 +5754,8 @@ function bindSidebarMenus() {
     renderProfileSettings();
   });
 
-  if (getUiMode() === 'focus' && menuFocusHome) {
-    setActive(menuFocusHome);
-    showFocusHome();
-  } else {
-    setActive(menuOverview || null);
-    showDashboard();
-  }
+  setActive(menuOverview || null);
+  showDashboard();
 }
 
 function renderWealth() {
