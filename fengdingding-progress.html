@@ -865,6 +865,55 @@ body {
   color: #3d6cd8;
 }
 
+.support-menu-link {
+  text-decoration: none;
+}
+
+.support-menu-link:focus-visible {
+  outline: 2px solid rgba(47, 124, 246, 0.45);
+  outline-offset: 2px;
+}
+
+.support-panel {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+
+.support-panel-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.support-panel p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.support-pdf-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #d6e4ff;
+  background: #e8f0ff;
+  color: #315fc6;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.support-pdf-link:hover {
+  background: #dce9ff;
+}
+
 /* 快速打卡表单样式 */
 .quick-checkin-section {
   display: none;
@@ -2907,6 +2956,7 @@ body.focus-home-mode #mobileFocusHome {
       <div class="menu-btn" id="menuAiPlan"><span class="menu-icon">✨</span>AI 规划方向</div>
       <div class="menu-btn" id="menuAchievement"><span class="menu-icon">🏆</span>成就勋章</div>
       <div class="menu-btn" id="menuSettings"><span class="menu-icon">⚙️</span>设置中心</div>
+      <a class="menu-btn support-menu-link" href="./支持%20QuantLife.pdf" target="_blank" rel="noopener"><span class="menu-icon">¥</span>支持项目</a>
     </div>
   </aside>
 
@@ -3347,6 +3397,13 @@ body.focus-home-mode #mobileFocusHome {
           这里可以启用/禁用维度并调整顺序。禁用维度将不参与经验、等级与成就计算。
         </p>
         <div id="dimensionManager"></div>
+      </div>
+
+      <div class="support-panel">
+        <div class="support-panel-title">支持项目</div>
+        <p>如果 QuantLife Web 对你有帮助，可以打开打赏说明 PDF，自愿支持项目继续维护和改进。</p>
+        <p>打赏不会影响任何功能使用，也不代表购买服务或额外权限。</p>
+        <a class="support-pdf-link" href="./支持%20QuantLife.pdf" target="_blank" rel="noopener">打开支持与打赏说明</a>
       </div>
     </div>
   </div>
