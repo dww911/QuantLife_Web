@@ -8,6 +8,7 @@
 ![Bring Your Own Key](https://img.shields.io/badge/API-用户自备密钥-orange)
 
 > 把生活变成一场持续升级的游戏。
+> 人生努力可视化系统
 
 QuantLife Web 是一个本地优先的人生成长记录工具。你可以用它记录每日打卡、经验值、维度成长、任务营地、财富目标，也可以接入自己的 AI API 来做文字解析和规划。
 
