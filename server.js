@@ -260,14 +260,14 @@ function ensureDimensionDefs(progress) {
   }
   // Seed built-ins if missing (backward compatibility)
   const defaults = {
-    research: { key: 'research', name: 'Learning', emoji: 'L', goal: 'Define your learning goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } },
-    tem: { key: 'tem', name: 'Special Skill', emoji: 'T', goal: 'Define a specialized skill goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } },
-    coding: { key: 'coding', name: 'Coding', emoji: 'C', goal: 'Define your coding goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 70 } },
-    media: { key: 'media', name: 'Creation', emoji: 'M', goal: 'Define your creation goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 55 } },
-    editing: { key: 'editing', name: 'Editing', emoji: 'E', goal: 'Define your editing or craft goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 45 } },
-    speech: { key: 'speech', name: 'Communication', emoji: 'S', goal: 'Define your communication goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 50 } },
-    fitness: { key: 'fitness', name: 'Fitness', emoji: 'F', goal: 'Define your fitness goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 40 } },
-    makeup: { key: 'makeup', name: 'Style', emoji: 'I', goal: 'Define your style or self-care goal.', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 30 } }
+    research: { key: 'research', name: '学习成长', emoji: '学', goal: '写下你的学习成长目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } },
+    tem: { key: 'tem', name: '专项技能', emoji: '技', goal: '写下你的专项技能目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } },
+    coding: { key: 'coding', name: '编程能力', emoji: '码', goal: '写下你的编程能力目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 70 } },
+    media: { key: 'media', name: '创作表达', emoji: '创', goal: '写下你的创作表达目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 55 } },
+    editing: { key: 'editing', name: '剪辑技能', emoji: '剪', goal: '写下你的剪辑或手艺目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 45 } },
+    speech: { key: 'speech', name: '沟通表达', emoji: '言', goal: '写下你的沟通表达目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 50 } },
+    fitness: { key: 'fitness', name: '运动健康', emoji: '动', goal: '写下你的运动健康目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 40 } },
+    makeup: { key: 'makeup', name: '形象管理', emoji: '形', goal: '写下你的形象管理或自我照顾目标。', color: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 30 } }
   };
   Object.keys(defaults).forEach(k => {
     if (!progress.meta.dimensions.defs[k]) progress.meta.dimensions.defs[k] = defaults[k];

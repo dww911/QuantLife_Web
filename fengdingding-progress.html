@@ -2924,7 +2924,7 @@ body.focus-home-mode #mobileFocusHome {
     <div class="autosave-chip" id="autosaveStatus">未修改</div>
   </div>
   <div class="hero-right">
-    <div class="hero-bubble" id="appTaglineText">Build your life like a progress system.</div>
+    <div class="hero-bubble" id="appTaglineText">把生活变成一场持续升级的游戏。</div>
     <div class="hero-avatar">
       <span class="hero-avatar-fallback" id="heroAvatarFallback">Q</span>
       <img id="heroAvatarImg" src="" alt="Avatar" style="display:none;">
@@ -2939,7 +2939,7 @@ body.focus-home-mode #mobileFocusHome {
       <div class="focus-level" id="focusLevelText">Lv.1</div>
     </div>
     <div class="focus-level-info">
-      <div class="focus-name" id="focusDisplayName">QuantLife Player</div>
+      <div class="focus-name" id="focusDisplayName">成长玩家</div>
       <div class="focus-sub" id="focusExpHint">还需 200 XP 升级</div>
       <div class="focus-progress"><div class="focus-progress-fill" id="focusProgressFill" style="width:0%"></div></div>
     </div>
@@ -2968,7 +2968,7 @@ body.focus-home-mode #mobileFocusHome {
       <button type="button" class="focus-submit-btn" id="focusSubmitQuick">确认打卡（预计 +0 XP）</button>
     </div>
     <div class="focus-panel" id="focusAiPanel" style="display:none;">
-      <textarea id="focusAiText" placeholder="Example: studied for 2 hours and exercised for 30 minutes"></textarea>
+      <textarea id="focusAiText" placeholder="例如：今天学习2小时，运动30分钟"></textarea>
       <button type="button" class="focus-submit-btn" id="focusSubmitAi">确认AI解析（预计 +580 XP）</button>
       <div id="focusAiResult" class="focus-ai-result"></div>
     </div>
@@ -3176,11 +3176,11 @@ body.focus-home-mode #mobileFocusHome {
       <div class="checkin-form">
         <div class="form-group" style="grid-column: 1 / -1;">
           <label for="aiPlanGoal">你现在想推进什么？</label>
-          <textarea id="aiPlanGoal" rows="2" placeholder="Example: build a stable learning and fitness routine"></textarea>
+          <textarea id="aiPlanGoal" rows="2" placeholder="例如：建立稳定的学习和运动习惯"></textarea>
         </div>
         <div class="form-group" style="grid-column: 1 / -1;">
           <label for="aiPlanContext">你的现状 / 基础（可选）</label>
-          <textarea id="aiPlanContext" rows="2" placeholder="Example: I can spend 90 minutes on weekdays and 3 hours on weekends"></textarea>
+          <textarea id="aiPlanContext" rows="2" placeholder="例如：工作日每天90分钟，周末每天3小时"></textarea>
         </div>
       </div>
       <div>
@@ -3236,7 +3236,7 @@ body.focus-home-mode #mobileFocusHome {
         </div>
         <div class="form-group">
           <label for="editWealthYear">目标年份</label>
-          <input type="number" id="editWealthYear" placeholder="Example: 2026">
+          <input type="number" id="editWealthYear" placeholder="例如：2026">
         </div>
       </div>
       <div class="form-actions" style="margin-top: 16px;">
@@ -3269,7 +3269,7 @@ body.focus-home-mode #mobileFocusHome {
           </div>
           <div class="form-group" style="grid-column: 1 / -1;">
             <label for="profileTagline">主页标语</label>
-            <input type="text" id="profileTagline" placeholder="例如：Build your life like a progress system.">
+            <input type="text" id="profileTagline" placeholder="例如：把生活变成一场持续升级的游戏。">
           </div>
           <div class="form-group">
             <label for="profileAvatarText">头像文字</label>
@@ -3400,7 +3400,7 @@ body.focus-home-mode #mobileFocusHome {
         <div class="achievement-list" id="achStreakBadges"></div>
       </div>
       <div class="achievement-panel">
-        <div class="achievement-panel-title">Skill Milestones</div>
+        <div class="achievement-panel-title">能力里程碑</div>
         <div class="achievement-list" id="achMilestones"></div>
       </div>
     </div>
@@ -3481,10 +3481,10 @@ body.focus-home-mode #mobileFocusHome {
             <span style="font-size:0.9rem; color:#5c6784; font-weight:700;">归属维度（可选）</span>
             <select id="aiIngestHintDim" style="width:min(100%,220px);min-width:0;">
               <option value="">自动判断</option>
-              <option value="research">Learning</option>
-              <option value="tem">Special Skill</option>
+              <option value="research">学习成长</option>
+              <option value="tem">专项技能</option>
               <option value="coding">💻 编程能力</option>
-              <option value="media">Creation</option>
+              <option value="media">创作表达</option>
               <option value="editing">✂️ 剪辑技能</option>
               <option value="speech">🗣️ 表达输出</option>
               <option value="fitness">🏃 运动健身</option>
@@ -3529,14 +3529,14 @@ body.focus-home-mode #mobileFocusHome {
 
 <script>
 const dimensionsConfig = [
-  { key: 'research', name: 'Learning', emoji: 'L', goal: 'Define your learning goal.' },
-  { key: 'media', name: 'Creation', emoji: 'M', goal: 'Define your creation goal.' },
-  { key: 'fitness', name: 'Fitness', emoji: 'F', goal: 'Define your fitness goal.' },
-  { key: 'makeup', name: 'Style', emoji: 'I', goal: 'Define your style or self-care goal.' },
-  { key: 'tem', name: 'Special Skill', emoji: 'T', goal: 'Define a specialized skill goal.' },
-  { key: 'speech', name: 'Communication', emoji: 'S', goal: 'Define your communication goal.' },
-  { key: 'editing', name: 'Editing', emoji: 'E', goal: 'Define your editing or craft goal.' },
-  { key: 'coding', name: 'Coding', emoji: 'C', goal: 'Define your coding goal.' }
+  { key: 'research', name: '学习成长', emoji: '学', goal: '写下你的学习成长目标。' },
+  { key: 'media', name: '创作表达', emoji: '创', goal: '写下你的创作表达目标。' },
+  { key: 'fitness', name: '运动健康', emoji: '动', goal: '写下你的运动健康目标。' },
+  { key: 'makeup', name: '形象管理', emoji: '形', goal: '写下你的形象管理或自我照顾目标。' },
+  { key: 'tem', name: '专项技能', emoji: '技', goal: '写下你的专项技能目标。' },
+  { key: 'speech', name: '沟通表达', emoji: '言', goal: '写下你的沟通表达目标。' },
+  { key: 'editing', name: '剪辑技能', emoji: '剪', goal: '写下你的剪辑或手艺目标。' },
+  { key: 'coding', name: '编程能力', emoji: '码', goal: '写下你的编程能力目标。' }
 ];
 
 const DIMENSION_CONFIG_SCHEMA_VERSION = 1;
@@ -3777,9 +3777,9 @@ function saveProfileSettings() {
   const tagline = String(document.getElementById('profileTagline')?.value || '').trim();
   const avatarText = String(document.getElementById('profileAvatarText')?.value || '').trim();
   const avatarUrl = String(document.getElementById('profileAvatarUrl')?.value || '').trim();
-  p.nickname = nickname || 'QuantLife Player';
+  p.nickname = nickname || '成长玩家';
   p.app_title = appTitle || 'QuantLife';
-  p.tagline = tagline || 'Build your life like a progress system.';
+  p.tagline = tagline || '把生活变成一场持续升级的游戏。';
   p.avatar_text = (avatarText || p.nickname.slice(0, 1) || 'Q').slice(0, 2);
   p.avatar_url = avatarUrl;
 
@@ -3987,9 +3987,9 @@ function ensureProfileSettings(pd) {
   if (!pd.meta || typeof pd.meta !== 'object') pd.meta = {};
   if (!pd.meta.profile || typeof pd.meta.profile !== 'object') pd.meta.profile = {};
   const p = pd.meta.profile;
-  if (!p.nickname) p.nickname = 'QuantLife Player';
+  if (!p.nickname) p.nickname = '成长玩家';
   if (!p.app_title) p.app_title = 'QuantLife';
-  if (!p.tagline) p.tagline = 'Build your life like a progress system.';
+  if (!p.tagline) p.tagline = '把生活变成一场持续升级的游戏。';
   if (!p.avatar_text) p.avatar_text = String(p.nickname || 'Q').slice(0, 1);
   if (typeof p.avatar_url !== 'string') p.avatar_url = '';
   if (!p.dimension_coeff || typeof p.dimension_coeff !== 'object') p.dimension_coeff = {};
@@ -4143,14 +4143,14 @@ let progressData = {
     dimensions: {
       schemaVersion: 2,
       defs: {
-        research: { key: 'research', name: 'Learning', emoji: 'L', color: '#2f7cf6', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } },
-        coding: { key: 'coding', name: 'Coding', emoji: 'C', color: '#34c759', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 70 } },
-        fitness: { key: 'fitness', name: 'Fitness', emoji: 'F', color: '#ff9500', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 40 } },
-        speech: { key: 'speech', name: 'Communication', emoji: 'S', color: '#af52de', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 50 } },
-        media: { key: 'media', name: 'Creation', emoji: 'M', color: '#ff3b30', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 55 } },
-        editing: { key: 'editing', name: 'Editing', emoji: 'E', color: '#5ac8fa', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 45 } },
-        makeup: { key: 'makeup', name: 'Style', emoji: 'I', color: '#ff2d55', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 30 } },
-        tem: { key: 'tem', name: 'Special Skill', emoji: 'T', color: '#8e8e93', goal: '', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } }
+        research: { key: 'research', name: '学习成长', emoji: '学', color: '#2f7cf6', goal: '写下你的学习成长目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } },
+        coding: { key: 'coding', name: '编程能力', emoji: '码', color: '#34c759', goal: '写下你的编程能力目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 70 } },
+        fitness: { key: 'fitness', name: '运动健康', emoji: '动', color: '#ff9500', goal: '写下你的运动健康目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 40 } },
+        speech: { key: 'speech', name: '沟通表达', emoji: '言', color: '#af52de', goal: '写下你的沟通表达目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 50 } },
+        media: { key: 'media', name: '创作表达', emoji: '创', color: '#ff3b30', goal: '写下你的创作表达目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 55 } },
+        editing: { key: 'editing', name: '剪辑技能', emoji: '剪', color: '#5ac8fa', goal: '写下你的剪辑或手艺目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 45 } },
+        makeup: { key: 'makeup', name: '形象管理', emoji: '形', color: '#ff2d55', goal: '写下你的形象管理或自我照顾目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 30 } },
+        tem: { key: 'tem', name: '专项技能', emoji: '技', color: '#8e8e93', goal: '写下你的专项技能目标。', archived: false, exp_config: { mode: 'base_rate', base_rate_per_hour: 60 } }
       }
     },
     ui: {
@@ -4171,9 +4171,9 @@ let progressData = {
     },
     profile: {
       name: 'QuantLife',
-      nickname: 'QuantLife Player',
+      nickname: '成长玩家',
       app_title: 'QuantLife',
-      tagline: 'Build your life like a progress system.',
+      tagline: '把生活变成一场持续升级的游戏。',
       avatar: '',
       avatar_text: 'Q',
       avatar_url: '',
@@ -4212,9 +4212,9 @@ let progressData = {
     updated_at: null
   },
   task_camp: {
-    daily: { title: 'Daily Tasks', reward_exp: 120, tasks: [] },
-    monthly: { title: 'Monthly Tasks', tasks: [] },
-    yearly: { title: 'Yearly Tasks', tasks: [] }
+    daily: { title: '每日任务', reward_exp: 120, tasks: [] },
+    monthly: { title: '月度任务', tasks: [] },
+    yearly: { title: '年度任务', tasks: [] }
   }
 };
 
@@ -4651,9 +4651,9 @@ function renderAll(data) {
 
 function renderProfileToUi(data) {
   const p = data?.meta?.profile || {};
-  const nickname = String(p.nickname || 'QuantLife Player').trim() || 'QuantLife Player';
+  const nickname = String(p.nickname || '成长玩家').trim() || '成长玩家';
   const appTitle = String(p.app_title || 'QuantLife').trim() || 'QuantLife';
-  const tagline = String(p.tagline || 'Build your life like a progress system.').trim() || 'Build your life like a progress system.';
+  const tagline = String(p.tagline || '把生活变成一场持续升级的游戏。').trim() || '把生活变成一场持续升级的游戏。';
   const avatarText = String(p.avatar_text || nickname.slice(0, 1) || 'Q').trim().slice(0, 2);
   const avatarUrl = String(p.avatar_url || '').trim();
   const appTitleText = document.getElementById('appTitleText');
@@ -4953,10 +4953,10 @@ function renderAchievements(data) {
   ];
 
   const dimSpec = [
-    { key: 'research', title: 'Learning', steps: [['Beginner', 25], ['Steady Learner', 50], ['Deep Worker', 80], ['Domain Builder', 120]] },
-    { key: 'tem', title: 'Special Skill', steps: [['Starter', 25], ['Practitioner', 50], ['Operator', 80], ['Specialist', 120]] },
+    { key: 'research', title: '学习成长', steps: [['入门选手', 25], ['稳定学习者', 50], ['深度专注者', 80], ['领域建设者', 120]] },
+    { key: 'tem', title: '专项技能', steps: [['起步玩家', 25], ['熟练练习者', 50], ['独立操作者', 80], ['专项高手', 120]] },
     { key: 'coding', title: '编程能力', steps: [['复制粘贴工程师', 25], ['调参改码小能手', 50], ['代码重构达人', 80], ['算法自研大佬', 120]] },
-    { key: 'media', title: 'Creation', steps: [['Starter', 25], ['Consistent Maker', 50], ['Strong Voice', 80], ['Creator', 120]] },
+    { key: 'media', title: '创作表达', steps: [['起步玩家', 25], ['稳定创作者', 50], ['表达成型者', 80], ['成熟创作者', 120]] },
     { key: 'editing', title: '剪辑技能', steps: [['剪映基础用户', 25], ['素材缝合高手', 50], ['成片量产达人', 80], ['视觉剪辑大神', 120]] },
     { key: 'speech', title: '表达输出', steps: [['社恐破冰新人', 25], ['正常发言选手', 50], ['从容输出达人', 80], ['当众不慌战神', 120]] },
     { key: 'fitness', title: '运动健身', steps: [['佛系养生选手', 25], ['偶尔动一动', 50], ['规律健身党', 80], ['体能在线达人', 120]] },
@@ -4972,11 +4972,11 @@ function renderAchievements(data) {
   ];
 
   const milestones = [
-    { name: 'Code Builder', ok: () => dimLevels.coding >= 80, desc: 'Reach a strong coding level' },
-    { name: 'Skill Specialist', ok: () => dimLevels.tem >= 80, desc: 'Reach a strong specialized-skill level' },
+    { name: '代码建设者', ok: () => dimLevels.coding >= 80, desc: '编程能力达到较高等级' },
+    { name: '专项技能达人', ok: () => dimLevels.tem >= 80, desc: '专项技能达到较高等级' },
     { name: '组会不紧张', ok: () => dimLevels.speech >= 80, desc: '多次独立汇报，流畅输出(用表达等级近似)' },
-    { name: 'Learning Builder', ok: () => dimLevels.research >= 80, desc: 'Reach a strong learning level' },
-    { name: 'Consistent Creator', ok: () => dimLevels.media >= 80, desc: 'Reach a strong creation level' }
+    { name: '学习建设者', ok: () => dimLevels.research >= 80, desc: '学习成长达到较高等级' },
+    { name: '稳定创作者', ok: () => dimLevels.media >= 80, desc: '创作表达达到较高等级' }
   ];
 
   const iconSvg = (k) => {

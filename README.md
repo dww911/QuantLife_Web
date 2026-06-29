@@ -54,17 +54,17 @@ Anthropic-compatible providers use:
 - `ANTHROPIC_AUTH_TOKEN`
 - `ANTHROPIC_MODEL`
 
-## Personalize The App
+## 个性化设置
 
-Open Settings in the app to customize:
+打开应用内的设置中心，可以自定义：
 
-- nickname
-- app title
-- home tagline
-- avatar text or avatar image URL
-- enabled dimensions, dimension names, order, goals, and scoring coefficients
+- 昵称
+- 应用名称
+- 主页标语
+- 头像文字或头像图片 URL
+- 启用的维度、维度名称、排序、目标和经验系数
 
-These settings are saved in the user's local progress data, not in the shared template.
+这些设置会保存在用户自己的本地进度数据中，不会写回共享模板。
 
 ## Files That Must Stay Private
 

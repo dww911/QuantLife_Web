@@ -5,14 +5,14 @@
     "dimensions": {
       "schemaVersion": 2,
       "defs": {
-        "research": { "key": "research", "name": "Learning", "emoji": "L", "color": "#2f7cf6", "goal": "Define your learning goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 60 } },
-        "coding": { "key": "coding", "name": "Coding", "emoji": "C", "color": "#34c759", "goal": "Define your coding goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 70 } },
-        "fitness": { "key": "fitness", "name": "Fitness", "emoji": "F", "color": "#ff9500", "goal": "Define your fitness goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 40 } },
-        "speech": { "key": "speech", "name": "Communication", "emoji": "S", "color": "#af52de", "goal": "Define your communication goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 50 } },
-        "media": { "key": "media", "name": "Creation", "emoji": "M", "color": "#ff3b30", "goal": "Define your creation goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 55 } },
-        "editing": { "key": "editing", "name": "Editing", "emoji": "E", "color": "#5ac8fa", "goal": "Define your editing or craft goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 45 } },
-        "makeup": { "key": "makeup", "name": "Style", "emoji": "I", "color": "#ff2d55", "goal": "Define your style or self-care goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 30 } },
-        "tem": { "key": "tem", "name": "Special Skill", "emoji": "T", "color": "#8e8e93", "goal": "Define a specialized skill goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 60 } }
+        "research": { "key": "research", "name": "学习成长", "emoji": "学", "color": "#2f7cf6", "goal": "写下你的学习成长目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 60 } },
+        "coding": { "key": "coding", "name": "编程能力", "emoji": "码", "color": "#34c759", "goal": "写下你的编程能力目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 70 } },
+        "fitness": { "key": "fitness", "name": "运动健康", "emoji": "动", "color": "#ff9500", "goal": "写下你的运动健康目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 40 } },
+        "speech": { "key": "speech", "name": "沟通表达", "emoji": "言", "color": "#af52de", "goal": "写下你的沟通表达目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 50 } },
+        "media": { "key": "media", "name": "创作表达", "emoji": "创", "color": "#ff3b30", "goal": "写下你的创作表达目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 55 } },
+        "editing": { "key": "editing", "name": "剪辑技能", "emoji": "剪", "color": "#5ac8fa", "goal": "写下你的剪辑或手艺目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 45 } },
+        "makeup": { "key": "makeup", "name": "形象管理", "emoji": "形", "color": "#ff2d55", "goal": "写下你的形象管理或自我照顾目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 30 } },
+        "tem": { "key": "tem", "name": "专项技能", "emoji": "技", "color": "#8e8e93", "goal": "写下你的专项技能目标。", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 60 } }
       }
     },
     "ui": {
@@ -33,9 +33,9 @@
     },
     "profile": {
       "name": "QuantLife",
-      "nickname": "QuantLife Player",
+      "nickname": "成长玩家",
       "app_title": "QuantLife",
-      "tagline": "Build your life like a progress system.",
+      "tagline": "把生活变成一场持续升级的游戏。",
       "avatar": "",
       "avatar_text": "Q",
       "avatar_url": "",
@@ -70,8 +70,8 @@
     "updated_at": null
   },
   "task_camp": {
-    "daily": { "title": "Daily Tasks", "reward_exp": 120, "tasks": [] },
-    "monthly": { "title": "Monthly Tasks", "tasks": [] },
-    "yearly": { "title": "Yearly Tasks", "tasks": [] }
+    "daily": { "title": "每日任务", "reward_exp": 120, "tasks": [] },
+    "monthly": { "title": "月度任务", "tasks": [] },
+    "yearly": { "title": "年度任务", "tasks": [] }
   }
 }
