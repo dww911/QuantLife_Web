@@ -608,7 +608,7 @@ function normalizePlanDirectionResult(parsed) {
   return { main_line, today_actions };
 }
 
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(ROOT));
 
 app.get('/', async (req, res) => {

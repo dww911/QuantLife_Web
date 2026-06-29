@@ -3279,6 +3279,11 @@ body.focus-home-mode #mobileFocusHome {
             <label for="profileAvatarUrl">头像图片 URL（可选）</label>
             <input type="text" id="profileAvatarUrl" placeholder="例如：https://example.com/me.png">
           </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="profileAvatarFile">本地头像图片（可选）</label>
+            <input type="file" id="profileAvatarFile" accept="image/*">
+            <div class="help-text">选择本地图片后会自动压缩并保存到你的本地进度数据中。</div>
+          </div>
         </div>
         <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);">
           <h4 style="margin-bottom: 10px; font-size: 0.95rem;">🧠 八维难度系数（维度系数）</h4>
@@ -3741,11 +3746,16 @@ function renderProfileSettings() {
   const taglineEl = document.getElementById('profileTagline');
   const avatarTextEl = document.getElementById('profileAvatarText');
   const avatarUrlEl = document.getElementById('profileAvatarUrl');
+  const avatarFileEl = document.getElementById('profileAvatarFile');
   if (nicknameEl) nicknameEl.value = String(p.nickname || '');
   if (appTitleEl) appTitleEl.value = String(p.app_title || '');
   if (taglineEl) taglineEl.value = String(p.tagline || '');
   if (avatarTextEl) avatarTextEl.value = String(p.avatar_text || '');
   if (avatarUrlEl) avatarUrlEl.value = String(p.avatar_url || '');
+  if (avatarFileEl && !avatarFileEl.dataset.bound) {
+    avatarFileEl.dataset.bound = '1';
+    avatarFileEl.addEventListener('change', handleAvatarFileSelect);
+  }
 
   const coeffWrap = document.getElementById('dimensionCoeffEditor');
   if (coeffWrap) {
@@ -3769,6 +3779,59 @@ function renderProfileSettings() {
   if (highEl) highEl.value = String(q.high);
 }
 
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(reader.error || new Error('读取图片失败'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageFromDataUrl(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('图片加载失败'));
+    img.src = dataUrl;
+  });
+}
+
+async function compressAvatarFile(file) {
+  if (!file || !String(file.type || '').startsWith('image/')) {
+    throw new Error('请选择图片文件');
+  }
+  const rawDataUrl = await readFileAsDataUrl(file);
+  const img = await loadImageFromDataUrl(rawDataUrl);
+  const maxSize = 512;
+  const scale = Math.min(1, maxSize / Math.max(img.width || maxSize, img.height || maxSize));
+  const width = Math.max(1, Math.round((img.width || maxSize) * scale));
+  const height = Math.max(1, Math.round((img.height || maxSize) * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, width, height);
+  return canvas.toDataURL('image/jpeg', 0.86);
+}
+
+async function handleAvatarFileSelect(event) {
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+  try {
+    pendingAvatarDataUrl = await compressAvatarFile(file);
+    const avatarUrlEl = document.getElementById('profileAvatarUrl');
+    if (avatarUrlEl) avatarUrlEl.value = pendingAvatarDataUrl;
+    const p = progressData.meta.profile || {};
+    p.avatar_url = pendingAvatarDataUrl;
+    renderProfileToUi(progressData);
+    setAutosaveStatus('本地头像已载入，点击保存个人设置后生效', 'saving');
+  } catch (err) {
+    pendingAvatarDataUrl = null;
+    alert(`头像图片处理失败：${String(err.message || err)}`);
+  }
+}
+
 function saveProfileSettings() {
   ensureProfileSettings(progressData);
   const p = progressData.meta.profile;
@@ -3781,7 +3844,8 @@ function saveProfileSettings() {
   p.app_title = appTitle || 'QuantLife';
   p.tagline = tagline || '把生活变成一场持续升级的游戏。';
   p.avatar_text = (avatarText || p.nickname.slice(0, 1) || 'Q').slice(0, 2);
-  p.avatar_url = avatarUrl;
+  p.avatar_url = pendingAvatarDataUrl && avatarUrl === pendingAvatarDataUrl ? pendingAvatarDataUrl : avatarUrl;
+  pendingAvatarDataUrl = null;
 
   if (!p.dimension_coeff || typeof p.dimension_coeff !== 'object') p.dimension_coeff = {};
   Object.keys(DEFAULT_DIMENSION_COEFF).forEach((k) => {
@@ -4227,6 +4291,7 @@ let isSaving = false;
 let saveQueued = false;
 let autoSaveTimer = null;
 let runtimeLlmConfig = null;
+let pendingAvatarDataUrl = null;
 let deferredInstallPrompt = null;
 
 function setAutosaveStatus(text, state = '') {
