@@ -5006,11 +5006,12 @@ function getMondayWeekDates(anchorYmd) {
 function getDayEntriesForStats(data, dateStr) {
   const activeDimKeys = getActiveDimensionKeys(data);
   const activeKeys = new Set(activeDimKeys);
+  const isStatsEntry = (entry) => entry && (activeKeys.has(entry.dimension_key) || entry.dimension_key === 'system');
   const todayLog = data.daily_log?.[dateStr];
   let entries = Array.isArray(todayLog?.entries) ? todayLog.entries.slice() : [];
-  entries = entries.filter(e => e && activeKeys.has(e.dimension_key));
+  entries = entries.filter(isStatsEntry);
   if (entries.length) return entries;
-  return (Array.isArray(data.history) ? data.history : []).filter(h => h?.date === dateStr && activeKeys.has(h.dimension_key));
+  return (Array.isArray(data.history) ? data.history : []).filter(h => h?.date === dateStr && isStatsEntry(h));
 }
 
 function renderBattleWeekStrip() {
@@ -5039,10 +5040,13 @@ function renderTodayStats(data, dateOverride) {
   const activeDimKeys = getActiveDimensionKeys(data);
   const activeKeys = new Set(activeDimKeys);
 
-  const todayEntriesFiltered = getDayEntriesForStats(data, targetDate).filter(e => e && activeKeys.has(e.dimension_key));
+  const todayEntriesFiltered = getDayEntriesForStats(data, targetDate)
+    .filter(e => e && (activeKeys.has(e.dimension_key) || e.dimension_key === 'system'));
   const totalExp = todayEntriesFiltered.reduce((s, e) => s + (Number(e.exp_gained) || 0), 0);
 
-  const doneDims = new Set(todayEntriesFiltered.filter(e => e?.completed && (Number(e.exp_gained) || 0) > 0).map(e => e.dimension_key));
+  const doneDims = new Set(todayEntriesFiltered
+    .filter(e => e?.completed && activeKeys.has(e.dimension_key) && (Number(e.exp_gained) || 0) > 0)
+    .map(e => e.dimension_key));
   const doneCount = doneDims.size;
   const totalDims = activeDimKeys.length;
   const pct = totalDims ? Math.round((doneCount / totalDims) * 100) : 0;
@@ -5103,7 +5107,7 @@ function renderTodayStats(data, dateOverride) {
   const sorted = [...todayEntriesFiltered].filter(Boolean).reverse();
   sorted.forEach(item => {
     const dimMeta = defs[item.dimension_key];
-    const dimName = dimMeta ? dimMeta.name : (item.task_type || '—');
+    const dimName = item.dimension_key === 'system' ? (item.task_type || '系统奖励') : (dimMeta ? dimMeta.name : (item.task_type || '—'));
     const statusClass = item.completed ? 'done' : 'undone';
     const statusTextRow = item.completed ? '完成' : '未完成';
     const exp = Number(item.exp_gained) || 0;
