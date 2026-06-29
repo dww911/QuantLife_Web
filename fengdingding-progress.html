@@ -865,15 +865,6 @@ body {
   color: #3d6cd8;
 }
 
-.support-menu-link {
-  text-decoration: none;
-}
-
-.support-menu-link:focus-visible {
-  outline: 2px solid rgba(47, 124, 246, 0.45);
-  outline-offset: 2px;
-}
-
 .support-panel {
   margin-top: 18px;
   padding-top: 18px;
@@ -912,6 +903,50 @@ body {
 
 .support-pdf-link:hover {
   background: #dce9ff;
+}
+
+.support-section .card {
+  padding: clamp(16px, 2vw, 24px);
+}
+
+.support-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.support-section-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.support-section-subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.support-image-wrap {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 2vw, 18px);
+}
+
+.support-image {
+  width: 100%;
+  display: block;
+  max-width: 860px;
+  height: auto;
+  border-radius: 8px;
 }
 
 /* 快速打卡表单样式 */
@@ -2507,7 +2542,8 @@ body.focus-home-mode #quickCheckinSection,
 body.focus-home-mode #wealthSection,
 body.focus-home-mode #taskCampSection,
 body.focus-home-mode #achievementSection,
-body.focus-home-mode #settingsSection {
+body.focus-home-mode #settingsSection,
+body.focus-home-mode #supportSection {
   display: none !important;
 }
 
@@ -2790,6 +2826,7 @@ body.focus-home-mode #mobileFocusHome {
   .main-content > #wealthSection,
   .main-content > #settingsSection,
   .main-content > #achievementSection,
+  .main-content > #supportSection,
   .main-content > #quickCheckinSection {
     order: 10;
   }
@@ -2956,7 +2993,7 @@ body.focus-home-mode #mobileFocusHome {
       <div class="menu-btn" id="menuAiPlan"><span class="menu-icon">✨</span>AI 规划方向</div>
       <div class="menu-btn" id="menuAchievement"><span class="menu-icon">🏆</span>成就勋章</div>
       <div class="menu-btn" id="menuSettings"><span class="menu-icon">⚙️</span>设置中心</div>
-      <a class="menu-btn support-menu-link" href="./支持%20QuantLife.pdf" target="_blank" rel="noopener"><span class="menu-icon">¥</span>支持项目</a>
+      <div class="menu-btn" id="menuSupport"><span class="menu-icon">¥</span>支持项目</div>
     </div>
   </aside>
 
@@ -3401,10 +3438,26 @@ body.focus-home-mode #mobileFocusHome {
 
       <div class="support-panel">
         <div class="support-panel-title">支持项目</div>
-        <p>如果 QuantLife Web 对你有帮助，可以打开打赏说明 PDF，自愿支持项目继续维护和改进。</p>
+        <p>如果 QuantLife Web 对你有帮助，可以查看打赏页面，自愿支持项目继续维护和改进。</p>
         <p>打赏不会影响任何功能使用，也不代表购买服务或额外权限。</p>
-        <a class="support-pdf-link" href="./支持%20QuantLife.pdf" target="_blank" rel="noopener">打开支持与打赏说明</a>
+        <button type="button" class="support-pdf-link" id="settingsOpenSupport">查看支持与打赏页面</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 支持项目模块 -->
+<div id="supportSection" class="support-section" style="display: none;">
+  <div class="card">
+    <div class="support-section-head">
+      <div>
+        <div class="support-section-title">支持 QuantLife</div>
+        <p class="support-section-subtitle">感谢你愿意支持项目继续维护和改进。打赏完全自愿，不影响任何功能使用。</p>
+      </div>
+      <a class="support-pdf-link" href="./支持%20QuantLife.pdf" target="_blank" rel="noopener">打开原 PDF</a>
+    </div>
+    <div class="support-image-wrap">
+      <img class="support-image" src="./assets/support/support-quantlife.jpg" alt="支持 QuantLife 打赏页面">
     </div>
   </div>
 </div>
@@ -5627,7 +5680,7 @@ function mapSectionToMobileTab(sectionEl) {
   else if (id === 'quickCheckinSection') setMobileTabActive('quick');
   else if (id === 'taskCampSection') setMobileTabActive('task');
   else if (id === 'settingsSection') setMobileTabActive('profile');
-  else if (id === 'wealthSection' || id === 'achievementSection') clearMobileTabActive();
+  else if (id === 'wealthSection' || id === 'achievementSection' || id === 'supportSection') clearMobileTabActive();
   else setMobileTabActive('overview');
 }
 
@@ -5732,10 +5785,13 @@ function bindSidebarMenus() {
   const menuAiPlan = document.getElementById('menuAiPlan');
   const menuAchievement = document.getElementById('menuAchievement');
   const menuSettings = document.getElementById('menuSettings');
+  const menuSupport = document.getElementById('menuSupport');
+  const settingsOpenSupport = document.getElementById('settingsOpenSupport');
   const taskCampSection = document.getElementById('taskCampSection');
   const aiPlanSection = document.getElementById('aiPlanSection');
   const wealthSection = document.getElementById('wealthSection');
   const settingsSection = document.getElementById('settingsSection');
+  const supportSection = document.getElementById('supportSection');
   const focusHomeSection = document.getElementById('mobileFocusHome');
   const quickCheckinSection = document.getElementById('quickCheckinSection');
   const achievementSection = document.getElementById('achievementSection');
@@ -5749,6 +5805,7 @@ function bindSidebarMenus() {
     if (aiPlanSection) aiPlanSection.style.display = 'none';
     if (wealthSection) wealthSection.style.display = 'none';
     if (settingsSection) settingsSection.style.display = 'none';
+    if (supportSection) supportSection.style.display = 'none';
     if (quickCheckinSection) quickCheckinSection.style.display = 'none';
     if (achievementSection) achievementSection.style.display = 'none';
     if (todayStatsSection) todayStatsSection.style.display = 'none';
@@ -5809,6 +5866,16 @@ function bindSidebarMenus() {
     loadLlmConfigUI();
     renderDimensionManager();
     renderProfileSettings();
+  });
+  if (menuSupport) menuSupport.addEventListener('click', () => {
+    setActive(menuSupport);
+    showOnly(supportSection);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  if (settingsOpenSupport) settingsOpenSupport.addEventListener('click', () => {
+    setActive(menuSupport || null);
+    showOnly(supportSection);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   setActive(menuOverview || null);
