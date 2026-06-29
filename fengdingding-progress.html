@@ -2360,7 +2360,7 @@ body,
   border-radius: 12px;
   background: #fbfcff;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(120px, 180px) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 180px) minmax(96px, 120px) minmax(96px, 120px) auto;
   gap: 8px;
 }
 
@@ -6535,20 +6535,102 @@ function ensureDailyLogForDate(dateStr) {
   return log;
 }
 
-function applyTaskCampTaskReward(task) {
-  if (!task || task.reward_entry_id) return;
+function getTaskCampTypeLabel(type) {
+  if (type === 'monthly') return '月度任务';
+  if (type === 'yearly') return '年度任务';
+  return '每日任务';
+}
+
+function getTaskCampDefaultMinutes(type) {
+  if (type === 'monthly') return 120;
+  if (type === 'yearly') return 240;
+  return 30;
+}
+
+function normalizeTaskCampQuality(value) {
+  return ['low', 'normal', 'high'].includes(value) ? value : 'normal';
+}
+
+function getTaskCampQualityLabel(value) {
+  const q = normalizeTaskCampQuality(value);
+  if (q === 'low') return '轻量';
+  if (q === 'high') return '高质量';
+  return '标准';
+}
+
+function clampTaskCampMinutes(value, fallback = 30) {
+  const n = Math.round(Number(value));
+  if (!Number.isFinite(n) || n < 1) return fallback;
+  return Math.max(1, Math.min(1440, n));
+}
+
+function inferTaskCampMinutesFromExp(task, type, dimension) {
+  const exp = Math.max(0, Math.round(Number(task?.reward_exp) || 0));
+  if (!exp) return getTaskCampDefaultMinutes(type);
+  const base = Number(getBaseRateByDim(progressData)?.[dimension] || 50);
+  const minutes = Math.round((exp / Math.max(1, base)) * 60);
+  return clampTaskCampMinutes(minutes, getTaskCampDefaultMinutes(type));
+}
+
+function normalizeTaskCampTask(task, type = 'daily') {
+  if (!task || typeof task !== 'object') return task;
+  const active = getActiveDimensions();
+  const activeKeys = new Set(active.map(d => d.key));
+  if (!activeKeys.has(task.dimension_key)) task.dimension_key = active[0]?.key || 'research';
+  if (!Number.isFinite(Number(task.minutes))) {
+    task.minutes = inferTaskCampMinutesFromExp(task, type, task.dimension_key);
+  } else {
+    task.minutes = clampTaskCampMinutes(task.minutes, getTaskCampDefaultMinutes(type));
+  }
+  task.quality = normalizeTaskCampQuality(task.quality);
+  if (task.reward_entry_id && Number.isFinite(Number(task.reward_exp))) {
+    task.reward_exp = Math.max(1, Math.round(Number(task.reward_exp)));
+  } else {
+    task.reward_exp = calcTaskCampTaskReward(task, type);
+  }
+  return task;
+}
+
+function calcTaskCampTaskReward(task, type = 'daily') {
+  const dimension = getActiveDimensions().some(d => d.key === task?.dimension_key) ? task.dimension_key : (getActiveDimensions()[0]?.key || 'research');
+  const minutes = clampTaskCampMinutes(task?.minutes, getTaskCampDefaultMinutes(type));
+  const quality = normalizeTaskCampQuality(task?.quality);
+  const base = Number(getBaseRateByDim(progressData)?.[dimension] || 50);
+  const qualityMult = Number(getQualityPreset(progressData)?.[quality] || 1);
+  return Math.max(1, Math.round((minutes / 60) * base * qualityMult));
+}
+
+function getTaskCampRewardMeta(task, type = 'daily') {
+  normalizeTaskCampTask(task, type);
+  const quality = normalizeTaskCampQuality(task.quality);
+  const qualityMult = Number(getQualityPreset(progressData)?.[quality] || 1);
+  return {
+    minutes: clampTaskCampMinutes(task.minutes, getTaskCampDefaultMinutes(type)),
+    quality,
+    qualityLabel: getTaskCampQualityLabel(quality),
+    qualityMult,
+    exp: Math.max(1, Math.round(Number(task.reward_exp) || calcTaskCampTaskReward(task, type)))
+  };
+}
+
+function applyTaskCampTaskReward(task, type = 'daily') {
+  if (!task || task.reward_entry_id) return false;
   const dimension = getActiveDimensions().some(d => d.key === task.dimension_key) ? task.dimension_key : (getActiveDimensions()[0]?.key || 'research');
-  const exp = Math.max(0, Math.round(Number(task.reward_exp) || 30));
+  task.dimension_key = dimension;
+  const meta = getTaskCampRewardMeta(task, type);
+  const exp = meta.exp;
   if (!exp) return;
-  const entryId = taskCampMakeId('daily_reward');
+  const entryId = taskCampMakeId(`${type}_reward`);
   const defs = getDimensionDefs(progressData);
+  const dateStr = today;
+  const label = getTaskCampTypeLabel(type);
   const entry = {
     id: entryId,
-    date: today,
+    date: dateStr,
     dimension_key: dimension,
     task_type: defs[dimension]?.name || dimension,
-    difficulty: `任务营地·单项任务·+${exp}`,
-    description: task.title || '每日任务完成',
+    difficulty: `任务营地·${label}·${meta.minutes}分钟·${meta.qualityLabel}×${meta.qualityMult}`,
+    description: `${label}：${task.title || '未命名任务'}`,
     exp_gained: exp,
     completed: true
   };
@@ -6559,25 +6641,29 @@ function applyTaskCampTaskReward(task) {
   progressData.dimensions[dimension].total_exp += exp;
   progressData.total_exp = (Number(progressData.total_exp) || 0) + exp;
   recomputeProgressLevel();
-  const dayLog = ensureDailyLogForDate(today);
+  const dayLog = ensureDailyLogForDate(dateStr);
   dayLog.entries.push(entry);
   dayLog.day_total_exp += exp;
   if (!dayLog.dimensions_touched.includes(dimension)) dayLog.dimensions_touched.push(dimension);
   task.reward_entry_id = entryId;
+  task.reward_date = dateStr;
+  task.completed_at = new Date().toISOString();
   task.reward_exp = exp;
+  return true;
 }
 
 function revokeTaskCampTaskReward(task) {
-  if (!task?.reward_entry_id) return;
+  if (!task?.reward_entry_id) return false;
   const entryId = task.reward_entry_id;
   const findEntry = (arr) => Array.isArray(arr) ? arr.find(e => e?.id === entryId) : null;
-  const entry = findEntry(progressData.history) || findEntry(progressData.daily_log?.[today]?.entries);
+  const entry = findEntry(progressData.history) || Object.values(progressData.daily_log || {}).map(log => findEntry(log?.entries)).find(Boolean);
   const exp = Math.max(0, Math.round(Number(entry?.exp_gained) || Number(task.reward_exp) || 0));
   const dimension = entry?.dimension_key || task.dimension_key;
+  const dateStr = entry?.date || task.reward_date || today;
   if (Array.isArray(progressData.history)) {
     progressData.history = progressData.history.filter(e => e?.id !== entryId);
   }
-  const dayLog = progressData.daily_log?.[today];
+  const dayLog = progressData.daily_log?.[dateStr];
   if (dayLog && Array.isArray(dayLog.entries)) {
     dayLog.entries = dayLog.entries.filter(e => e?.id !== entryId);
     dayLog.day_total_exp = Math.max(0, (Number(dayLog.day_total_exp) || 0) - exp);
@@ -6592,12 +6678,42 @@ function revokeTaskCampTaskReward(task) {
   progressData.total_exp = Math.max(0, (Number(progressData.total_exp) || 0) - exp);
   recomputeProgressLevel();
   delete task.reward_entry_id;
+  delete task.reward_date;
+  delete task.completed_at;
+  return true;
+}
+
+function syncTaskCampRewards() {
+  ensureTaskCampData();
+  let changed = false;
+  const day = getTaskCampDailyDoc();
+  (day.tasks || []).forEach(task => {
+    normalizeTaskCampTask(task, 'daily');
+    if (task.done && !task.reward_entry_id) changed = applyTaskCampTaskReward(task, 'daily') || changed;
+    if (!task.done && task.reward_entry_id) changed = revokeTaskCampTaskReward(task) || changed;
+  });
+  (progressData.task_camp.monthly.tasks || []).forEach(task => {
+    normalizeTaskCampTask(task, 'monthly');
+    if (task.status === 'done' && !task.reward_entry_id) changed = applyTaskCampTaskReward(task, 'monthly') || changed;
+    if (task.status !== 'done' && task.reward_entry_id) changed = revokeTaskCampTaskReward(task) || changed;
+  });
+  (progressData.task_camp.yearly.tasks || []).forEach(task => {
+    normalizeTaskCampTask(task, 'yearly');
+    if (task.status === 'done' && !task.reward_entry_id) changed = applyTaskCampTaskReward(task, 'yearly') || changed;
+    if (task.status !== 'done' && task.reward_entry_id) changed = revokeTaskCampTaskReward(task) || changed;
+  });
+  return changed;
 }
 
 function renderTaskCamp() {
   const container = document.getElementById('taskCampContainer');
   if (!container) return;
   ensureTaskCampData();
+  const rewardSynced = syncTaskCampRewards();
+  if (rewardSynced) {
+    renderAll(progressData);
+    queueAutoSave();
+  }
   const tc = progressData.task_camp;
   const active = tc.active_tab || 'daily';
   container.innerHTML = `
@@ -6653,9 +6769,10 @@ function renderTaskCampDaily() {
   const reward = Number(day.reward_exp) || Number(progressData.task_camp.daily.reward_exp) || 120;
   const rewardText = day.reward_granted ? `今日全勤奖励已发放 +${reward}` : `全完成后自动发放：+${reward}`;
   const list = tasks.map(t => {
+    normalizeTaskCampTask(t, 'daily');
     const dim = dimensionsConfig.find(d => d.key === t.dimension_key);
     const dimName = dim ? dim.name : t.dimension_key;
-    const taskExp = Math.max(0, Math.round(Number(t.reward_exp) || 30));
+    const meta = getTaskCampRewardMeta(t, 'daily');
     const textStyle = t.done ? 'text-decoration:line-through;color:#9aa2b4;' : 'color:#1f2435;';
     return `
       <div class="taskcamp-task">
@@ -6666,7 +6783,9 @@ function renderTaskCampDaily() {
           <div class="taskcamp-task-meta">
             <span class="taskcamp-pill ${t.done ? 'pill-done' : 'pill-not_started'}">${t.done ? '✅ 已完成' : '🔘 未完成'}</span>
             <span class="taskcamp-pill" style="background:#f3f6ff;border-color:#dbe7ff;color:#2f7cf6;">${dimName}</span>
-            <span class="taskcamp-pill" style="background:#fff7ed;border-color:#fed7aa;color:#c2410c;">+${taskExp} XP</span>
+            <span class="taskcamp-pill" style="background:#f8fafc;border-color:#e2e8f0;color:#475569;">${meta.minutes} 分钟</span>
+            <span class="taskcamp-pill" style="background:#eefcf7;border-color:#bbf7d0;color:#047857;">${meta.qualityLabel}</span>
+            <span class="taskcamp-pill" style="background:#fff7ed;border-color:#fed7aa;color:#c2410c;">+${meta.exp} XP</span>
           </div>
         </div>
         <div class="taskcamp-actions">
@@ -6693,7 +6812,12 @@ function renderTaskCampDaily() {
     <div class="taskcamp-add-row">
       <input id="taskCampDailyTitle" placeholder="添加新任务，例如：阅读一篇文献" style="border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">
       <select id="taskCampDailyDim" style="border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">${dimOptions}</select>
-      <input id="taskCampDailyExp" type="number" min="1" max="500" step="1" value="30" title="单项经验值" style="width:110px;border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">
+      <input id="taskCampDailyMinutes" type="number" min="1" max="1440" step="5" value="30" title="预计投入分钟" style="border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">
+      <select id="taskCampDailyQuality" title="任务质量档" style="border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">
+        <option value="normal">标准质量</option>
+        <option value="low">轻量完成</option>
+        <option value="high">高质量完成</option>
+      </select>
       <button class="taskcamp-btn primary" data-tc-action="daily_add">+ 添加新任务</button>
     </div>
   `;
@@ -6706,8 +6830,10 @@ function renderTaskCampMonthly() {
   const total = list.length;
   const pct = total ? Math.round((done / total) * 100) : 0;
   const html = list.map(t => {
+    normalizeTaskCampTask(t, 'monthly');
     const dim = dimensionsConfig.find(d => d.key === t.dimension_key);
     const dimName = dim ? dim.name : t.dimension_key;
+    const meta = getTaskCampRewardMeta(t, 'monthly');
     return `
       <div class="taskcamp-task">
         <div class="taskcamp-task-main">
@@ -6715,6 +6841,9 @@ function renderTaskCampMonthly() {
           <div class="taskcamp-task-meta">
             <span class="taskcamp-pill ${getStatusPillClass(t.status || 'not_started')}">${getStatusLabel(t.status || 'not_started')}</span>
             <span class="taskcamp-pill" style="background:#f3f6ff;border-color:#dbe7ff;color:#2f7cf6;">${dimName}</span>
+            <span class="taskcamp-pill" style="background:#f8fafc;border-color:#e2e8f0;color:#475569;">${meta.minutes} 分钟</span>
+            <span class="taskcamp-pill" style="background:#eefcf7;border-color:#bbf7d0;color:#047857;">${meta.qualityLabel}</span>
+            <span class="taskcamp-pill" style="background:#fff7ed;border-color:#fed7aa;color:#c2410c;">+${meta.exp} XP</span>
           </div>
         </div>
         <div class="taskcamp-actions">
@@ -6748,8 +6877,10 @@ function renderTaskCampYearly() {
   const total = list.length;
   const pct = total ? Math.round((done / total) * 100) : 0;
   const html = list.map(t => {
+    normalizeTaskCampTask(t, 'yearly');
     const dim = dimensionsConfig.find(d => d.key === t.dimension_key);
     const dimName = dim ? dim.name : t.dimension_key;
+    const meta = getTaskCampRewardMeta(t, 'yearly');
     return `
       <div class="taskcamp-task">
         <div class="taskcamp-task-main">
@@ -6757,6 +6888,9 @@ function renderTaskCampYearly() {
           <div class="taskcamp-task-meta">
             <span class="taskcamp-pill ${getStatusPillClass(t.status || 'not_started')}">${getStatusLabel(t.status || 'not_started')}</span>
             <span class="taskcamp-pill" style="background:#f3f6ff;border-color:#dbe7ff;color:#2f7cf6;">${dimName}</span>
+            <span class="taskcamp-pill" style="background:#f8fafc;border-color:#e2e8f0;color:#475569;">${meta.minutes} 分钟</span>
+            <span class="taskcamp-pill" style="background:#eefcf7;border-color:#bbf7d0;color:#047857;">${meta.qualityLabel}</span>
+            <span class="taskcamp-pill" style="background:#fff7ed;border-color:#fed7aa;color:#c2410c;">+${meta.exp} XP</span>
           </div>
           ${t.note ? `<div style="font-size:12px;color:#7b8397;">阶段备注：${t.note}</div>` : ''}
         </div>
@@ -6790,15 +6924,19 @@ function renderTaskCampYearly() {
 function handleTaskCampDailyAdd() {
   const titleInput = document.getElementById('taskCampDailyTitle');
   const dimInput = document.getElementById('taskCampDailyDim');
-  const expInput = document.getElementById('taskCampDailyExp');
+  const minutesInput = document.getElementById('taskCampDailyMinutes');
+  const qualityInput = document.getElementById('taskCampDailyQuality');
   const title = String(titleInput?.value || '').trim();
   if (!title) return;
-  const dimension_key = dimensionsConfig.some(d => d.key === dimInput?.value) ? dimInput.value : 'research';
-  const reward_exp = Math.max(1, Math.min(500, Math.round(Number(expInput?.value) || 30)));
+  const dimension_key = getActiveDimensions().some(d => d.key === dimInput?.value) ? dimInput.value : (getActiveDimensions()[0]?.key || 'research');
+  const minutes = clampTaskCampMinutes(minutesInput?.value, getTaskCampDefaultMinutes('daily'));
+  const quality = normalizeTaskCampQuality(qualityInput?.value);
+  const draft = normalizeTaskCampTask({ id: taskCampMakeId('d'), title, dimension_key, minutes, quality, done: false }, 'daily');
   const day = getTaskCampDailyDoc();
-  day.tasks.push({ id: taskCampMakeId('d'), title, dimension_key, reward_exp, done: false });
+  day.tasks.push(draft);
   if (titleInput) titleInput.value = '';
-  if (expInput) expInput.value = '30';
+  if (minutesInput) minutesInput.value = '30';
+  if (qualityInput) qualityInput.value = 'normal';
   renderAll(progressData);
   queueAutoSave();
   renderTaskCamp();
@@ -6812,7 +6950,7 @@ function handleTaskCampToggle(payload) {
   if (!target) return;
   const nextDone = !target.done;
   target.done = nextDone;
-  if (nextDone) applyTaskCampTaskReward(target);
+  if (nextDone) applyTaskCampTaskReward(target, 'daily');
   else revokeTaskCampTaskReward(target);
   const allDone = day.tasks.length > 0 && day.tasks.every(t => !!t.done);
   if (allDone && !day.reward_granted) {
@@ -6836,6 +6974,9 @@ function handleTaskCampSetStatus(payload) {
   const target = list.find(t => t.id === id);
   if (!target) return;
   target.status = status;
+  if (status === 'done') applyTaskCampTaskReward(target, type);
+  else revokeTaskCampTaskReward(target);
+  renderAll(progressData);
   queueAutoSave();
   renderTaskCamp();
 }
@@ -6849,8 +6990,12 @@ function handleTaskCampDelete(payload) {
     if (target) revokeTaskCampTaskReward(target);
     day.tasks = day.tasks.filter(t => t.id !== id);
   } else if (type === 'monthly') {
+    const target = progressData.task_camp.monthly.tasks.find(t => t.id === id);
+    if (target) revokeTaskCampTaskReward(target);
     progressData.task_camp.monthly.tasks = progressData.task_camp.monthly.tasks.filter(t => t.id !== id);
   } else if (type === 'yearly') {
+    const target = progressData.task_camp.yearly.tasks.find(t => t.id === id);
+    if (target) revokeTaskCampTaskReward(target);
     progressData.task_camp.yearly.tasks = progressData.task_camp.yearly.tasks.filter(t => t.id !== id);
   }
   renderAll(progressData);
@@ -6876,7 +7021,13 @@ function handleTaskCampAdd(type) {
   const dimOptions = getActiveDimensions().map(d => `${d.key}:${d.name}`).join('｜');
   const dimRaw = (prompt(`所属维度（输入 key）：\n${dimOptions}\n\n例如：research`) || '').trim();
   const dimension_key = getActiveDimensions().some(d => d.key === dimRaw) ? dimRaw : (getActiveDimensions()[0]?.key || 'research');
-  const base = { id: taskCampMakeId(type), title, dimension_key, status: 'not_started', created_at: new Date().toISOString() };
+  const defaultMinutes = getTaskCampDefaultMinutes(type);
+  const minutesRaw = prompt(`预计投入分钟：\n按时间计算经验值，例如 ${defaultMinutes}`, String(defaultMinutes));
+  if (minutesRaw === null) return;
+  const minutes = clampTaskCampMinutes(minutesRaw, defaultMinutes);
+  const qualityRaw = (prompt('质量档（输入 low / normal / high）：\nlow=轻量完成，normal=标准质量，high=高质量完成', 'normal') || 'normal').trim();
+  const quality = normalizeTaskCampQuality(qualityRaw);
+  const base = normalizeTaskCampTask({ id: taskCampMakeId(type), title, dimension_key, minutes, quality, status: 'not_started', created_at: new Date().toISOString() }, type);
   if (type === 'monthly') progressData.task_camp.monthly.tasks.push(base);
   else progressData.task_camp.yearly.tasks.push({ ...base, note: '' });
   queueAutoSave();
