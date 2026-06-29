@@ -6516,6 +6516,84 @@ function applyDailyFullReward(expInt) {
   progressData.daily_log[today].day_total_exp += exp;
 }
 
+function recomputeProgressLevel() {
+  progressData.total_exp = Math.max(0, Number(progressData.total_exp) || 0);
+  progressData.level = Math.floor(progressData.total_exp / 200) + 1;
+  progressData.current_level_exp = progressData.total_exp % 200;
+  progressData.exp_to_next = 200 - progressData.current_level_exp;
+}
+
+function ensureDailyLogForDate(dateStr) {
+  if (!progressData.daily_log) progressData.daily_log = {};
+  if (!progressData.daily_log[dateStr]) {
+    progressData.daily_log[dateStr] = { date: dateStr, entries: [], day_total_exp: 0, dimensions_touched: [] };
+  }
+  const log = progressData.daily_log[dateStr];
+  if (!Array.isArray(log.entries)) log.entries = [];
+  if (!Array.isArray(log.dimensions_touched)) log.dimensions_touched = [];
+  if (!Number.isFinite(Number(log.day_total_exp))) log.day_total_exp = 0;
+  return log;
+}
+
+function applyTaskCampTaskReward(task) {
+  if (!task || task.reward_entry_id) return;
+  const dimension = getActiveDimensions().some(d => d.key === task.dimension_key) ? task.dimension_key : (getActiveDimensions()[0]?.key || 'research');
+  const exp = Math.max(0, Math.round(Number(task.reward_exp) || 30));
+  if (!exp) return;
+  const entryId = taskCampMakeId('daily_reward');
+  const defs = getDimensionDefs(progressData);
+  const entry = {
+    id: entryId,
+    date: today,
+    dimension_key: dimension,
+    task_type: defs[dimension]?.name || dimension,
+    difficulty: `任务营地·单项任务·+${exp}`,
+    description: task.title || '每日任务完成',
+    exp_gained: exp,
+    completed: true
+  };
+  if (!Array.isArray(progressData.history)) progressData.history = [];
+  progressData.history.push(entry);
+  if (!progressData.dimensions || typeof progressData.dimensions !== 'object') progressData.dimensions = {};
+  if (!progressData.dimensions[dimension]) progressData.dimensions[dimension] = { total_exp: 0 };
+  progressData.dimensions[dimension].total_exp += exp;
+  progressData.total_exp = (Number(progressData.total_exp) || 0) + exp;
+  recomputeProgressLevel();
+  const dayLog = ensureDailyLogForDate(today);
+  dayLog.entries.push(entry);
+  dayLog.day_total_exp += exp;
+  if (!dayLog.dimensions_touched.includes(dimension)) dayLog.dimensions_touched.push(dimension);
+  task.reward_entry_id = entryId;
+  task.reward_exp = exp;
+}
+
+function revokeTaskCampTaskReward(task) {
+  if (!task?.reward_entry_id) return;
+  const entryId = task.reward_entry_id;
+  const findEntry = (arr) => Array.isArray(arr) ? arr.find(e => e?.id === entryId) : null;
+  const entry = findEntry(progressData.history) || findEntry(progressData.daily_log?.[today]?.entries);
+  const exp = Math.max(0, Math.round(Number(entry?.exp_gained) || Number(task.reward_exp) || 0));
+  const dimension = entry?.dimension_key || task.dimension_key;
+  if (Array.isArray(progressData.history)) {
+    progressData.history = progressData.history.filter(e => e?.id !== entryId);
+  }
+  const dayLog = progressData.daily_log?.[today];
+  if (dayLog && Array.isArray(dayLog.entries)) {
+    dayLog.entries = dayLog.entries.filter(e => e?.id !== entryId);
+    dayLog.day_total_exp = Math.max(0, (Number(dayLog.day_total_exp) || 0) - exp);
+    const stillTouched = dayLog.entries.some(e => e?.dimension_key === dimension);
+    if (!stillTouched && Array.isArray(dayLog.dimensions_touched)) {
+      dayLog.dimensions_touched = dayLog.dimensions_touched.filter(k => k !== dimension);
+    }
+  }
+  if (dimension && progressData.dimensions?.[dimension]) {
+    progressData.dimensions[dimension].total_exp = Math.max(0, (Number(progressData.dimensions[dimension].total_exp) || 0) - exp);
+  }
+  progressData.total_exp = Math.max(0, (Number(progressData.total_exp) || 0) - exp);
+  recomputeProgressLevel();
+  delete task.reward_entry_id;
+}
+
 function renderTaskCamp() {
   const container = document.getElementById('taskCampContainer');
   if (!container) return;
@@ -6577,6 +6655,7 @@ function renderTaskCampDaily() {
   const list = tasks.map(t => {
     const dim = dimensionsConfig.find(d => d.key === t.dimension_key);
     const dimName = dim ? dim.name : t.dimension_key;
+    const taskExp = Math.max(0, Math.round(Number(t.reward_exp) || 30));
     const textStyle = t.done ? 'text-decoration:line-through;color:#9aa2b4;' : 'color:#1f2435;';
     return `
       <div class="taskcamp-task">
@@ -6587,6 +6666,7 @@ function renderTaskCampDaily() {
           <div class="taskcamp-task-meta">
             <span class="taskcamp-pill ${t.done ? 'pill-done' : 'pill-not_started'}">${t.done ? '✅ 已完成' : '🔘 未完成'}</span>
             <span class="taskcamp-pill" style="background:#f3f6ff;border-color:#dbe7ff;color:#2f7cf6;">${dimName}</span>
+            <span class="taskcamp-pill" style="background:#fff7ed;border-color:#fed7aa;color:#c2410c;">+${taskExp} XP</span>
           </div>
         </div>
         <div class="taskcamp-actions">
@@ -6613,6 +6693,7 @@ function renderTaskCampDaily() {
     <div class="taskcamp-add-row">
       <input id="taskCampDailyTitle" placeholder="添加新任务，例如：阅读一篇文献" style="border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">
       <select id="taskCampDailyDim" style="border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">${dimOptions}</select>
+      <input id="taskCampDailyExp" type="number" min="1" max="500" step="1" value="30" title="单项经验值" style="width:110px;border:1px solid #dbe2f0;border-radius:8px;padding:8px 10px;">
       <button class="taskcamp-btn primary" data-tc-action="daily_add">+ 添加新任务</button>
     </div>
   `;
@@ -6709,12 +6790,16 @@ function renderTaskCampYearly() {
 function handleTaskCampDailyAdd() {
   const titleInput = document.getElementById('taskCampDailyTitle');
   const dimInput = document.getElementById('taskCampDailyDim');
+  const expInput = document.getElementById('taskCampDailyExp');
   const title = String(titleInput?.value || '').trim();
   if (!title) return;
   const dimension_key = dimensionsConfig.some(d => d.key === dimInput?.value) ? dimInput.value : 'research';
+  const reward_exp = Math.max(1, Math.min(500, Math.round(Number(expInput?.value) || 30)));
   const day = getTaskCampDailyDoc();
-  day.tasks.push({ id: taskCampMakeId('d'), title, dimension_key, done: false });
+  day.tasks.push({ id: taskCampMakeId('d'), title, dimension_key, reward_exp, done: false });
   if (titleInput) titleInput.value = '';
+  if (expInput) expInput.value = '30';
+  renderAll(progressData);
   queueAutoSave();
   renderTaskCamp();
 }
@@ -6725,7 +6810,10 @@ function handleTaskCampToggle(payload) {
   const day = getTaskCampDailyDoc();
   const target = day.tasks.find(t => t.id === id);
   if (!target) return;
-  target.done = !target.done;
+  const nextDone = !target.done;
+  target.done = nextDone;
+  if (nextDone) applyTaskCampTaskReward(target);
+  else revokeTaskCampTaskReward(target);
   const allDone = day.tasks.length > 0 && day.tasks.every(t => !!t.done);
   if (allDone && !day.reward_granted) {
     const rewardExp = Number(day.reward_exp) || Number(progressData.task_camp.daily.reward_exp) || 120;
@@ -6734,6 +6822,7 @@ function handleTaskCampToggle(payload) {
     renderAll(progressData);
     alert(`今日每日任务已全完成，发放满勤奖励 +${rewardExp} 经验。`);
   }
+  renderAll(progressData);
   queueAutoSave();
   renderTaskCamp();
 }
@@ -6756,12 +6845,15 @@ function handleTaskCampDelete(payload) {
   if (!type || !id) return;
   if (type === 'daily') {
     const day = getTaskCampDailyDoc();
+    const target = day.tasks.find(t => t.id === id);
+    if (target) revokeTaskCampTaskReward(target);
     day.tasks = day.tasks.filter(t => t.id !== id);
   } else if (type === 'monthly') {
     progressData.task_camp.monthly.tasks = progressData.task_camp.monthly.tasks.filter(t => t.id !== id);
   } else if (type === 'yearly') {
     progressData.task_camp.yearly.tasks = progressData.task_camp.yearly.tasks.filter(t => t.id !== id);
   }
+  renderAll(progressData);
   queueAutoSave();
   renderTaskCamp();
 }
