@@ -1,0 +1,77 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "last_synced_at": null,
+    "dimensions": {
+      "schemaVersion": 2,
+      "defs": {
+        "research": { "key": "research", "name": "Learning", "emoji": "L", "color": "#2f7cf6", "goal": "Define your learning goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 60 } },
+        "coding": { "key": "coding", "name": "Coding", "emoji": "C", "color": "#34c759", "goal": "Define your coding goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 70 } },
+        "fitness": { "key": "fitness", "name": "Fitness", "emoji": "F", "color": "#ff9500", "goal": "Define your fitness goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 40 } },
+        "speech": { "key": "speech", "name": "Communication", "emoji": "S", "color": "#af52de", "goal": "Define your communication goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 50 } },
+        "media": { "key": "media", "name": "Creation", "emoji": "M", "color": "#ff3b30", "goal": "Define your creation goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 55 } },
+        "editing": { "key": "editing", "name": "Editing", "emoji": "E", "color": "#5ac8fa", "goal": "Define your editing or craft goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 45 } },
+        "makeup": { "key": "makeup", "name": "Style", "emoji": "I", "color": "#ff2d55", "goal": "Define your style or self-care goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 30 } },
+        "tem": { "key": "tem", "name": "Special Skill", "emoji": "T", "color": "#8e8e93", "goal": "Define a specialized skill goal.", "archived": false, "exp_config": { "mode": "base_rate", "base_rate_per_hour": 60 } }
+      }
+    },
+    "ui": {
+      "dimensionConfig": {
+        "schemaVersion": 2,
+        "order": ["research", "coding", "fitness", "speech", "media", "editing", "makeup", "tem"],
+        "enabledByKey": {
+          "research": true,
+          "coding": true,
+          "fitness": true,
+          "speech": true,
+          "media": true,
+          "editing": true,
+          "makeup": true,
+          "tem": true
+        }
+      }
+    },
+    "profile": {
+      "name": "QuantLife",
+      "nickname": "QuantLife Player",
+      "app_title": "QuantLife",
+      "tagline": "Build your life like a progress system.",
+      "avatar": "",
+      "avatar_text": "Q",
+      "avatar_url": "",
+      "theme": "default"
+    }
+  },
+  "level": 1,
+  "total_exp": 0,
+  "current_level_exp": 0,
+  "exp_to_next": 200,
+  "dimensions": {
+    "research": { "total_exp": 0 },
+    "coding": { "total_exp": 0 },
+    "fitness": { "total_exp": 0 },
+    "speech": { "total_exp": 0 },
+    "media": { "total_exp": 0 },
+    "editing": { "total_exp": 0 },
+    "makeup": { "total_exp": 0 },
+    "tem": { "total_exp": 0 }
+  },
+  "wealth": { "current": 0, "target": 100000, "year": 2026 },
+  "history": [],
+  "daily_log": {},
+  "achievements": [],
+  "insights": [],
+  "ai_plan_direction": {
+    "goal": "",
+    "context": "",
+    "main_line": "",
+    "today_actions": [],
+    "stages": [],
+    "updated_at": null
+  },
+  "task_camp": {
+    "daily": { "title": "Daily Tasks", "reward_exp": 120, "tasks": [] },
+    "monthly": { "title": "Monthly Tasks", "tasks": [] },
+    "yearly": { "title": "Yearly Tasks", "tasks": [] }
+  }
+}

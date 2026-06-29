@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+llm-config.json
+settings.json
+settings.local.json
+
+# Personal progress data
+fengdingding-progress.json
+fengdingding-progress.db
+fengdingding-progress.db-shm
+fengdingding-progress.db-wal
+backups/
+
+# Logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+

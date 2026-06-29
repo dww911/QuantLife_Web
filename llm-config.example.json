@@ -1,0 +1,14 @@
+{
+  "provider": "openai",
+  "openai": {
+    "base_url": "https://api.openai.com",
+    "api_key": "replace-with-your-own-key",
+    "model": "gpt-4.1-mini"
+  },
+  "anthropic": {
+    "base_url": "https://api.anthropic.com",
+    "auth_token": "replace-with-your-own-token",
+    "model": "claude-sonnet-4-5"
+  }
+}
+

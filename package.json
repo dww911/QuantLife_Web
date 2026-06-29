@@ -1,0 +1,18 @@
+{
+  "name": "quantlife-web",
+  "version": "1.0.0",
+  "description": "A local-first QuantLife progress tracker with optional user-provided LLM integration.",
+  "private": false,
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  }
+}
+
