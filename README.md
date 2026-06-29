@@ -298,17 +298,6 @@ http://localhost:3030
 - `llm-config.example.json`：AI 配置示例
 - `.gitignore`：忽略本地私有数据和密钥
 
-## 开源安全提醒
-
-不要上传这些文件：
-
-- `.env`
-- `llm-config.json`
-- `fengdingding-progress.json`
-- `fengdingding-progress.db*`
-- `backups/`
-
-它们包含用户自己的配置、进度数据，甚至可能包含 API Key。
 
 ## 支持项目
 
