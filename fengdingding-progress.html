@@ -941,12 +941,73 @@ body {
   padding: clamp(10px, 2vw, 18px);
 }
 
+.support-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 22px;
+  align-items: start;
+}
+
+.support-copy {
+  display: grid;
+  gap: 14px;
+  color: var(--text-primary);
+  font-size: 0.96rem;
+  line-height: 1.85;
+}
+
+.support-copy h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.support-copy p {
+  margin: 0;
+  color: #374151;
+}
+
+.support-copy ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #374151;
+}
+
+.support-payment-card {
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #f8fbff;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  text-align: center;
+}
+
+.support-payment-title {
+  font-weight: 800;
+  color: #1d4ed8;
+}
+
+.support-payment-note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
 .support-image {
   width: 100%;
   display: block;
-  max-width: 860px;
+  max-width: 260px;
   height: auto;
   border-radius: 8px;
+}
+
+@media (max-width: 760px) {
+  .support-content {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* 快速打卡表单样式 */
@@ -3456,8 +3517,28 @@ body.focus-home-mode #mobileFocusHome {
       </div>
       <a class="support-pdf-link" href="./支持%20QuantLife.pdf" target="_blank" rel="noopener">打开原 PDF</a>
     </div>
-    <div class="support-image-wrap">
-      <img class="support-image" src="./assets/support/support-quantlife.jpg" alt="支持 QuantLife 打赏页面">
+    <div class="support-content">
+      <div class="support-copy">
+        <h3>QuantLife 是一个开源的“人生努力可视化系统”项目。</h3>
+        <p>从最开始的一个想法，到现在大家可以真正上手体验，这对我们来说已经是很大的一步。一路走来，我们一直希望它不只是一个工具，而是真的能够帮助大家看见自己的努力，慢慢把生活推进得更清楚一点。</p>
+        <p>现在 QuantLife 选择以开源的方式继续往前走。我们希望通过记录、量化反馈、主线规划和复盘，让每个人都能更清楚地看到自己的努力轨迹。</p>
+        <h3>支持方式</h3>
+        <p>如果这个项目对你有帮助，或者你认可“让努力可视化”这件事，欢迎自愿支持和打赏我们的努力。一杯奶茶钱就很棒啦！</p>
+        <h3>说明</h3>
+        <ul>
+          <li>所有支持都是自愿的，不会影响项目的开源使用。</li>
+          <li>无论是否支持，我们都非常感谢你关注 QuantLife。</li>
+          <li>也欢迎你通过 Issue、PR、建议反馈、产品设计、UI/UX、开发共创等方式参与这个项目。</li>
+        </ul>
+        <p><strong>让努力可视化，人生不再模糊。</strong></p>
+      </div>
+      <div class="support-payment-card">
+        <div class="support-payment-title">自愿支持</div>
+        <p class="support-payment-note">如需打赏，可使用支付宝扫码。付款码仅作自愿支持入口。</p>
+        <div class="support-image-wrap">
+          <img class="support-image" src="./assets/support/support-quantlife.jpg" alt="支付宝支持 QuantLife 收款码">
+        </div>
+      </div>
     </div>
   </div>
 </div>
