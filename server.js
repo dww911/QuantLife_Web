@@ -8,6 +8,7 @@ const app = express();
 const PORT = Number(process.env.PORT || 3030);
 const ROOT = __dirname;
 const PROGRESS_JSON = path.join(ROOT, 'fengdingding-progress.json');
+const PROGRESS_EXAMPLE_JSON = path.join(ROOT, 'progress.example.json');
 const HTML_FILE = path.join(ROOT, 'fengdingding-progress.html');
 const BACKUP_DIR = path.join(ROOT, 'backups');
 const DB_FILE = path.join(ROOT, 'fengdingding-progress.db');
@@ -67,16 +68,28 @@ async function writeJsonBackupAndCurrent(payloadObj) {
 async function seedDbFromJsonIfNeeded() {
   const latest = selectLatestStmt.get();
   if (latest) return;
+  let raw = null;
+  let source = 'json_seed';
   try {
-    const raw = await fs.readFile(PROGRESS_JSON, 'utf-8');
+    raw = await fs.readFile(PROGRESS_JSON, 'utf-8');
+  } catch {
+    try {
+      raw = await fs.readFile(PROGRESS_EXAMPLE_JSON, 'utf-8');
+      source = 'example_seed';
+    } catch {
+      // If neither file exists, start with empty db state.
+    }
+  }
+  if (!raw) return;
+  try {
     const parsed = JSON.parse(raw);
     insertSnapshotStmt.run({
       saved_at: new Date().toISOString(),
-      source: 'json_seed',
+      source,
       payload: JSON.stringify(parsed)
     });
   } catch {
-    // If file doesn't exist or parse fails, start with empty db state.
+    // If JSON is invalid, start with empty db state.
   }
 }
 
