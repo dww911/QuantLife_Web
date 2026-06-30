@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+dist/
 
 # Local environment and secrets
 .env
@@ -21,4 +22,3 @@ backups/
 npm-debug.log*
 .DS_Store
 Thumbs.db
-
